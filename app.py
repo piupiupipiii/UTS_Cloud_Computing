@@ -1,12 +1,12 @@
-from flask import Flask, render_template
 import pymysql
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 db = pymysql.connect(
-    host='IP_DATABASE',
+    host='34.71.24.221',
     user='root',
-    password='PASSWORD',
+    password='Pipi.123',
     database='products_db'
 )
 
@@ -18,4 +18,4 @@ def home():
     return render_template('index.html', products=products)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
