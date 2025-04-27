@@ -1,0 +1,48 @@
+name: Deploy to GCP VM on Push to Main
+
+on:
+  push:
+    branches:
+      - main  # Trigger this workflow when pushing to the main branch
+
+jobs:
+  deploy:
+    name: Deploy to GCP VM
+    runs-on: ubuntu-latest  # Use Ubuntu runner
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Checkout the code
+
+      - name: Set up SSH Key
+        uses: webfactory/ssh-agent@v0.8.0  # Set up SSH agent
+        with:
+          ssh-private-key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}  # From GitHub secrets
+
+      - name: Install SSH Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client  # Install SSH client on runner
+
+      - name: Add Host Key to Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.GCP_HOST }} >> ~/.ssh/known_hosts  # Scan SSH key and add to known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy to GCP VM
+        run: |
+          HOST="${{ secrets.GCP_HOST }}"
+          USER="${{ secrets.GCP_USER }}"
+
+          ssh -o StrictHostKeyChecking=no $USER@$HOST << EOF
+            # Stop running app service
+            sudo systemctl stop my-python-app.service
+
+            # Update the latest code
+            cd /home/silvynurazkia690/UTS_Cloud_Computing
+            git pull origin main
+
+            # Restart the app service
+            sudo systemctl start my-python-app.service
+          EOF

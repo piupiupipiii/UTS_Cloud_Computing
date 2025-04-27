@@ -1,0 +1,13 @@
+[Unit]
+Description=My Python Application
+After=network.target
+
+[Service]
+User=silvynurazkia690  # Replace with your username
+WorkingDirectory=/home/silvynurazkia690/UTS_Cloud_Computing  # Replace with your application's directory
+ExecStart=/home/silvynurazkia690/venv/bin/python3 /home/silvynurazkia690/UTS_Cloud_Computing/app.py  # Full path to python in venv
+Restart=on-failure
+SyslogIdentifier=my-python-app
+
+[Install]
+WantedBy=multi-user.target
